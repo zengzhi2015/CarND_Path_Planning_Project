@@ -87,9 +87,6 @@
 		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/Play_ground.cpp">
 			<Option target="path_planning"/>
 		</Unit>
-		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/main.cpp">
-			<Option target="path_planning"/>
-		</Unit>
 		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

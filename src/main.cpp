@@ -220,13 +220,13 @@ int main() {
                     double car_yaw = j[1]["yaw"]; // the direction of the car in degree
                     double car_speed = j[1]["speed"];
 
-                    std::cout << " car_x:" << car_x
+/*                    std::cout << " car_x:" << car_x
                               << " car_y:" << car_y
                               << " car_s:" << car_s
                               << " car_d:" << car_d
                               << " car_yaw:" << car_yaw
                               << " car_speed:" << car_speed
-                              << std::endl;
+                              << std::endl;*/
 
                     // Previous path data given to the Planner
                     auto previous_path_x = j[1]["previous_path_x"]; // 47~48 data points
