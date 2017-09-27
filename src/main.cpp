@@ -232,11 +232,11 @@ int main() {
     }
 
     // 1.4. Modify the interpolation
-    tk::spline s_x_mod, s_y_mod, s_dx_mod, s_dy_mod;
-    s_x_mod.set_points(map_waypoints_s,map_waypoints_x);
-    s_y_mod.set_points(map_waypoints_s,map_waypoints_y);
-    s_dx_mod.set_points(map_waypoints_s,map_waypoints_dx);
-    s_dy_mod.set_points(map_waypoints_s,map_waypoints_dy);
+//    tk::spline s_x_mod, s_y_mod, s_dx_mod, s_dy_mod;
+//    s_x_mod.set_points(map_waypoints_s,map_waypoints_x);
+//    s_y_mod.set_points(map_waypoints_s,map_waypoints_y);
+//    s_dx_mod.set_points(map_waypoints_s,map_waypoints_dx);
+//    s_dy_mod.set_points(map_waypoints_s,map_waypoints_dy);
     s_x.set_points(map_waypoints_s,map_waypoints_x);
     s_y.set_points(map_waypoints_s,map_waypoints_y);
     s_dx.set_points(map_waypoints_s,map_waypoints_dx);
@@ -290,6 +290,9 @@ int main() {
 
                     vector<double> next_x_vals;
                     vector<double> next_y_vals;
+                    vector<double> next_s_vals;
+
+
 
                     for(int i = 0; i < previous_path_x.size(); i++)
                     {
@@ -297,14 +300,39 @@ int main() {
                         next_y_vals.push_back(previous_path_y[i]);
                     }
 
-                    if(flag==1) {
-                        for(int i=0;i<2000;i++) {
-                            double s_temp = car_s + 0.4*(double)(i+1);
-                            double d_temp = 0;//6+sin(M_PI*(double)i/150);
 
-                            next_x_vals.push_back(s_x(s_temp) + d_temp*s_dx(s_temp));
-                            next_y_vals.push_back(s_y(s_temp) + d_temp*s_dy(s_temp));
+                    if(flag==1) {
+
+
+                        for(int i=0;i<2000;i++) {
+
+                            double temp_s = car_s + 0.44*(double)(i);
+                            double temp_d = 6+4*sin(M_PI*(double)i/150);
+                            next_x_vals.push_back(s_x(temp_s) + temp_d*s_dx(temp_s));
+                            next_y_vals.push_back(s_y(temp_s) + temp_d*s_dy(temp_s));
+
+
+                            if(i==0) {
+                                next_s_vals.push_back(car_s);
+                            }
+                            else {
+                                double delta_s = distance(next_x_vals[i],next_y_vals[i],next_x_vals[i-1],next_y_vals[i-1]);
+                                next_s_vals.push_back(next_s_vals[i-1]+delta_s);
+                            }
+
                         }
+
+                        tk::spline s_x_local, s_y_local;
+                        s_x_local.set_points(next_s_vals,next_x_vals);
+                        s_y_local.set_points(next_s_vals,next_y_vals);
+                        next_x_vals.clear();
+                        next_y_vals.clear();
+                        for(int i=0;i<2000;i++) {
+                            double temp_s = car_s + 0.44*(double)(i);
+                            next_x_vals.push_back(s_x_local(temp_s));
+                            next_y_vals.push_back(s_y_local(temp_s));
+                        }
+
                         flag=0;
                     }
 
