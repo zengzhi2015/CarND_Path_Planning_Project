@@ -27,7 +27,21 @@ The path is much smoother than before. However, it seems that the way point is n
 
 ### 1.2. rescale way points
 To tackle the above problem, I will recalculate map_waypoint_s according to map_waypoint_x and map_waypoint_y.
+```
+map_waypoints_s.clear();
+for(int i=0;i<map_waypoints_x.size();i++) {
+    if(i==0) {
+        map_waypoints_s.push_back(0.0);
+    }
+    else {
+        double delta_s = distance(map_waypoints_x[i],map_waypoints_y[i],map_waypoints_x[i-1],map_waypoints_y[i-1]);
+        map_waypoints_s.push_back(map_waypoints_s[i-1]+delta_s);
+    }
+}
+```
+The problem is alleviated but not yst solved. This is mainly due to the function 'getXY'. This function provides no smoothing mechanism. Therefore, I have to realize this mechanism before entering an array of [x,y] into 'next_points'.
 
+### 1.3 Smoothing before sending commands
 
 
 ## Other instructions

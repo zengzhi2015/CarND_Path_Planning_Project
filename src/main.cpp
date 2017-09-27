@@ -131,26 +131,26 @@ vector<double> getFrenet(double x, double y, double theta, vector<double> maps_x
 
 // Transform from Frenet s,d coordinates to Cartesian x,y
 vector<double> getXY(double s, double d, vector<double> maps_s, vector<double> maps_x, vector<double> maps_y) {
-    // xy = getXY(...)
+    // get the previous way point
     int prev_wp = -1;
 
     while (s > maps_s[prev_wp + 1] && (prev_wp < (int) (maps_s.size() - 1))) {
         prev_wp++;
     }
 
+    // Get the next way point
     int wp2 = (prev_wp + 1) % maps_x.size();
 
+    // Get the direction of the vector from the previous way point to the next
     double heading = atan2((maps_y[wp2] - maps_y[prev_wp]), (maps_x[wp2] - maps_x[prev_wp]));
-    // the x,y,s along the segment
-    double seg_s = (s - maps_s[prev_wp]);
-
-    double seg_x = maps_x[prev_wp] + seg_s * cos(heading);
-    double seg_y = maps_y[prev_wp] + seg_s * sin(heading);
-
+    // Get the perpendicular direction
     double perp_heading = heading - pi() / 2;
 
-    double x = seg_x + d * cos(perp_heading);
-    double y = seg_y + d * sin(perp_heading);
+    // the x,y,s along the segment
+    double seg_s = (s - maps_s[prev_wp]); // the s distance from the previous way point
+
+    double x = maps_x[prev_wp] + seg_s * cos(heading) + d * cos(perp_heading);
+    double y = maps_y[prev_wp] + seg_s * sin(heading) + d * sin(perp_heading);
 
     return {x, y};
 }
@@ -159,12 +159,7 @@ int main() {
     uWS::Hub h;
 
     // Load up map values for waypoint's x,y,s and d normalized normal vectors
-    vector<double> map_waypoints_x_raw;
-    vector<double> map_waypoints_y_raw;
-    vector<double> map_waypoints_s_raw;
-    vector<double> map_waypoints_dx_raw;
-    vector<double> map_waypoints_dy_raw;
-    vector<double> map_waypoints_x;
+    vector<double> map_waypoints_x; // modified data
     vector<double> map_waypoints_y;
     vector<double> map_waypoints_s;
     vector<double> map_waypoints_dx;
@@ -182,42 +177,73 @@ int main() {
         istringstream iss(line);
         double x;
         double y;
-        float s;
-        float d_x;
-        float d_y;
+        double s;
+        double d_x;
+        double d_y;
         iss >> x;
         iss >> y;
         iss >> s;
         iss >> d_x;
         iss >> d_y;
-        map_waypoints_x_raw.push_back(x);
-        map_waypoints_y_raw.push_back(y);
-        map_waypoints_s_raw.push_back((double) s);
-        map_waypoints_dx_raw.push_back((double) d_x);
-        map_waypoints_dy_raw.push_back((double) d_y);
+        map_waypoints_x.push_back(x);
+        map_waypoints_y.push_back(y);
+        map_waypoints_s.push_back(s);
+        map_waypoints_dx.push_back(d_x);
+        map_waypoints_dy.push_back(d_y);
     }
 
-    // Modify the way points
+/*    // modification test
+    for(int i=0;i<map_waypoints_x.size();i++) {
+        map_waypoints_x[i] += 10*map_waypoints_dx[i];
+        map_waypoints_y[i] += 10*map_waypoints_dy[i];
+    }*/
+
+    // 1. Modify the way points
+    // 1.1. interpolate original way points using spline tool
     tk::spline s_x, s_y, s_dx, s_dy;
-    s_x.set_points(map_waypoints_s_raw,map_waypoints_x_raw);
-    s_y.set_points(map_waypoints_s_raw,map_waypoints_y_raw);
-    s_dx.set_points(map_waypoints_s_raw,map_waypoints_dx_raw);
-    s_dy.set_points(map_waypoints_s_raw,map_waypoints_dy_raw);
+    s_x.set_points(map_waypoints_s,map_waypoints_x);
+    s_y.set_points(map_waypoints_s,map_waypoints_y);
+    s_dx.set_points(map_waypoints_s,map_waypoints_dx);
+    s_dy.set_points(map_waypoints_s,map_waypoints_dy);
 
-    double s_max = *max_element(begin(map_waypoints_s_raw),end(map_waypoints_s_raw));
-    for(int i=0;i<s_max;i+=1) {
-        map_waypoints_s.push_back((double)i);
-        map_waypoints_x.push_back(s_x((double)i));
-        map_waypoints_y.push_back(s_y((double)i));
-        map_waypoints_dx.push_back(s_dx((double)i));
-        map_waypoints_dy.push_back(s_dy((double)i));
+    // 1.2. Modify the way points
+    double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
+    map_waypoints_x.clear();
+    map_waypoints_y.clear();
+    map_waypoints_dx.clear();
+    map_waypoints_dy.clear();
+    for(double s=0;s<s_max;s+=1) {
+        map_waypoints_x.push_back(s_x(s));
+        map_waypoints_y.push_back(s_y(s));
+        map_waypoints_dx.push_back(s_dx(s));
+        map_waypoints_dy.push_back(s_dy(s));
     }
 
-    // cout << map_waypoints_s_raw.size() << " " << *max_element(begin(map_waypoints_s_raw),end(map_waypoints_s_raw)) << endl;
-    //cout << map_waypoints_s.size() << " " << *max_element(begin(map_waypoints_s),end(map_waypoints_s)) << endl;
+    // 1.3. Rescale way points
+    map_waypoints_s.clear();
+    for(int i=0;i<map_waypoints_x.size();i++) {
+        if(i==0) {
+            map_waypoints_s.push_back(0.0);
+        }
+        else {
+            double delta_s = distance(map_waypoints_x[i],map_waypoints_y[i],map_waypoints_x[i-1],map_waypoints_y[i-1]);
+            map_waypoints_s.push_back(map_waypoints_s[i-1]+delta_s);
+        }
+    }
 
+    // 1.4. Modify the interpolation
+    tk::spline s_x_mod, s_y_mod, s_dx_mod, s_dy_mod;
+    s_x_mod.set_points(map_waypoints_s,map_waypoints_x);
+    s_y_mod.set_points(map_waypoints_s,map_waypoints_y);
+    s_dx_mod.set_points(map_waypoints_s,map_waypoints_dx);
+    s_dy_mod.set_points(map_waypoints_s,map_waypoints_dy);
+    s_x.set_points(map_waypoints_s,map_waypoints_x);
+    s_y.set_points(map_waypoints_s,map_waypoints_y);
+    s_dx.set_points(map_waypoints_s,map_waypoints_dx);
+    s_dy.set_points(map_waypoints_s,map_waypoints_dy);
 
-    h.onMessage([&map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy](
+    int flag=1;
+    h.onMessage([&flag,&map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy, &s_x, &s_y, &s_dx, &s_dy](
             uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
             uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -245,19 +271,9 @@ int main() {
                     double car_yaw = j[1]["yaw"]; // the direction of the car in degree
                     double car_speed = j[1]["speed"];
 
-/*                    std::cout << " car_x:" << car_x
-                              << " car_y:" << car_y
-                              << " car_s:" << car_s
-                              << " car_d:" << car_d
-                              << " car_yaw:" << car_yaw
-                              << " car_speed:" << car_speed
-                              << std::endl;*/
-
                     // Previous path data given to the Planner
                     auto previous_path_x = j[1]["previous_path_x"]; // 47~48 data points
                     auto previous_path_y = j[1]["previous_path_y"];
-//                  cout << previous_path_x << endl;
-//                  cout << previous_path_x.size() << endl;
 
                     // Previous path's end s and d values
                     double end_path_s = j[1]["end_path_s"];
@@ -270,20 +286,38 @@ int main() {
 
                     json msgJson;
 
+                    // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+
                     vector<double> next_x_vals;
                     vector<double> next_y_vals;
 
-                    // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+                    for(int i = 0; i < previous_path_x.size(); i++)
+                    {
+                        next_x_vals.push_back(previous_path_x[i]);
+                        next_y_vals.push_back(previous_path_y[i]);
+                    }
 
-                    // self way point test
+                    if(flag==1) {
+                        for(int i=0;i<2000;i++) {
+                            double s_temp = car_s + 0.4*(double)(i+1);
+                            double d_temp = 0;//6+sin(M_PI*(double)i/150);
+
+                            next_x_vals.push_back(s_x(s_temp) + d_temp*s_dx(s_temp));
+                            next_y_vals.push_back(s_y(s_temp) + d_temp*s_dy(s_temp));
+                        }
+                        flag=0;
+                    }
+
+
+/*                    // self way point test
                     for (int i = 0; i < 50; i++) {
 
-                        double s_temp = car_s + (double)i*0.4;
-                        double d_temp = 2;
+                        double s_temp = car_s + (double)(i+1)*0.4;
+                        double d_temp = 6;
                         vector<double> xy_temp = getXY(s_temp, d_temp, map_waypoints_s, map_waypoints_x, map_waypoints_y);
                         next_x_vals.push_back(xy_temp[0]);
                         next_y_vals.push_back(xy_temp[1]);
-                    }
+                    }*/
 
 /*
                     // way point test
@@ -297,15 +331,13 @@ int main() {
                     }
 */
 
-/*
-                    // go streight test
-                    double dist_inc = 0.5;
-                    for(int i = 0; i < 50; i++)
-                    {
-                      next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
-                      next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
-                    }
-*/
+//                    // go streight test
+//                    double dist_inc = 0.5;
+//                    for(int i = 0; i < 50; i++)
+//                    {
+//                      next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
+//                      next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
+//                    }
 
 /*
                     // circling test
