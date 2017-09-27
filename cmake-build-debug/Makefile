@@ -39,10 +39,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/zhi/clion-2017.2.1/bin/cmake/bin/cmake
+CMAKE_COMMAND = /home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /home/zhi/clion-2017.2.1/bin/cmake/bin/cmake -E remove -f
+RM = /home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/zhi/Documents/CarND_Path_Planning_Project/cmake-build-d
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/zhi/clion-2017.2.1/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/zhi/clion-2017.2.1/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -123,32 +123,32 @@ path_planning/fast:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/build
 .PHONY : path_planning/fast
 
-src/Play_ground.o: src/Play_ground.cpp.o
+src/main.o: src/main.cpp.o
 
-.PHONY : src/Play_ground.o
+.PHONY : src/main.o
 
 # target to build an object file
-src/Play_ground.cpp.o:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.o
-.PHONY : src/Play_ground.cpp.o
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-src/Play_ground.i: src/Play_ground.cpp.i
+src/main.i: src/main.cpp.i
 
-.PHONY : src/Play_ground.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-src/Play_ground.cpp.i:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.i
-.PHONY : src/Play_ground.cpp.i
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-src/Play_ground.s: src/Play_ground.cpp.s
+src/main.s: src/main.cpp.s
 
-.PHONY : src/Play_ground.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-src/Play_ground.cpp.s:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.s
-.PHONY : src/Play_ground.cpp.s
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -159,9 +159,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... path_planning"
-	@echo "... src/Play_ground.o"
-	@echo "... src/Play_ground.i"
-	@echo "... src/Play_ground.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 .PHONY : help
 
 

@@ -159,6 +159,11 @@ int main() {
     uWS::Hub h;
 
     // Load up map values for waypoint's x,y,s and d normalized normal vectors
+    vector<double> map_waypoints_x_raw;
+    vector<double> map_waypoints_y_raw;
+    vector<double> map_waypoints_s_raw;
+    vector<double> map_waypoints_dx_raw;
+    vector<double> map_waypoints_dy_raw;
     vector<double> map_waypoints_x;
     vector<double> map_waypoints_y;
     vector<double> map_waypoints_s;
@@ -185,12 +190,32 @@ int main() {
         iss >> s;
         iss >> d_x;
         iss >> d_y;
-        map_waypoints_x.push_back(x);
-        map_waypoints_y.push_back(y);
-        map_waypoints_s.push_back((double) s);
-        map_waypoints_dx.push_back((double) d_x);
-        map_waypoints_dy.push_back((double) d_y);
+        map_waypoints_x_raw.push_back(x);
+        map_waypoints_y_raw.push_back(y);
+        map_waypoints_s_raw.push_back((double) s);
+        map_waypoints_dx_raw.push_back((double) d_x);
+        map_waypoints_dy_raw.push_back((double) d_y);
     }
+
+    // Modify the way points
+    tk::spline s_x, s_y, s_dx, s_dy;
+    s_x.set_points(map_waypoints_s_raw,map_waypoints_x_raw);
+    s_y.set_points(map_waypoints_s_raw,map_waypoints_y_raw);
+    s_dx.set_points(map_waypoints_s_raw,map_waypoints_dx_raw);
+    s_dy.set_points(map_waypoints_s_raw,map_waypoints_dy_raw);
+
+    double s_max = *max_element(begin(map_waypoints_s_raw),end(map_waypoints_s_raw));
+    for(int i=0;i<s_max;i+=1) {
+        map_waypoints_s.push_back((double)i);
+        map_waypoints_x.push_back(s_x((double)i));
+        map_waypoints_y.push_back(s_y((double)i));
+        map_waypoints_dx.push_back(s_dx((double)i));
+        map_waypoints_dy.push_back(s_dy((double)i));
+    }
+
+    // cout << map_waypoints_s_raw.size() << " " << *max_element(begin(map_waypoints_s_raw),end(map_waypoints_s_raw)) << endl;
+    //cout << map_waypoints_s.size() << " " << *max_element(begin(map_waypoints_s),end(map_waypoints_s)) << endl;
+
 
     h.onMessage([&map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy](
             uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
@@ -254,7 +279,7 @@ int main() {
                     for (int i = 0; i < 50; i++) {
 
                         double s_temp = car_s + (double)i*0.4;
-                        double d_temp = 6;
+                        double d_temp = 2;
                         vector<double> xy_temp = getXY(s_temp, d_temp, map_waypoints_s, map_waypoints_x, map_waypoints_y);
                         next_x_vals.push_back(xy_temp[0]);
                         next_y_vals.push_back(xy_temp[1]);

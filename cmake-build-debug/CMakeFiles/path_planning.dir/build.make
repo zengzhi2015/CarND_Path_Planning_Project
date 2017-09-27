@@ -34,10 +34,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/zhi/clion-2017.2.1/bin/cmake/bin/cmake
+CMAKE_COMMAND = /home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake
 
 # The command to remove a file.
-RM = /home/zhi/clion-2017.2.1/bin/cmake/bin/cmake -E remove -f
+RM = /home/zhi/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/172.3968.17/bin/cmake/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -57,38 +57,38 @@ include CMakeFiles/path_planning.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/path_planning.dir/flags.make
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.o: CMakeFiles/path_planning.dir/flags.make
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.o: ../src/Play_ground.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zhi/Documents/CarND_Path_Planning_Project/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/path_planning.dir/src/Play_ground.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/path_planning.dir/src/Play_ground.cpp.o -c /home/zhi/Documents/CarND_Path_Planning_Project/src/Play_ground.cpp
+CMakeFiles/path_planning.dir/src/main.cpp.o: CMakeFiles/path_planning.dir/flags.make
+CMakeFiles/path_planning.dir/src/main.cpp.o: ../src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/zhi/Documents/CarND_Path_Planning_Project/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/path_planning.dir/src/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/path_planning.dir/src/main.cpp.o -c /home/zhi/Documents/CarND_Path_Planning_Project/src/main.cpp
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/path_planning.dir/src/Play_ground.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/zhi/Documents/CarND_Path_Planning_Project/src/Play_ground.cpp > CMakeFiles/path_planning.dir/src/Play_ground.cpp.i
+CMakeFiles/path_planning.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/path_planning.dir/src/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/zhi/Documents/CarND_Path_Planning_Project/src/main.cpp > CMakeFiles/path_planning.dir/src/main.cpp.i
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/path_planning.dir/src/Play_ground.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zhi/Documents/CarND_Path_Planning_Project/src/Play_ground.cpp -o CMakeFiles/path_planning.dir/src/Play_ground.cpp.s
+CMakeFiles/path_planning.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/path_planning.dir/src/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/zhi/Documents/CarND_Path_Planning_Project/src/main.cpp -o CMakeFiles/path_planning.dir/src/main.cpp.s
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.requires:
+CMakeFiles/path_planning.dir/src/main.cpp.o.requires:
 
-.PHONY : CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.requires
+.PHONY : CMakeFiles/path_planning.dir/src/main.cpp.o.requires
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.provides: CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.requires
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.provides.build
-.PHONY : CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.provides
+CMakeFiles/path_planning.dir/src/main.cpp.o.provides: CMakeFiles/path_planning.dir/src/main.cpp.o.requires
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.o.provides.build
+.PHONY : CMakeFiles/path_planning.dir/src/main.cpp.o.provides
 
-CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.provides.build: CMakeFiles/path_planning.dir/src/Play_ground.cpp.o
+CMakeFiles/path_planning.dir/src/main.cpp.o.provides.build: CMakeFiles/path_planning.dir/src/main.cpp.o
 
 
 # Object files for target path_planning
 path_planning_OBJECTS = \
-"CMakeFiles/path_planning.dir/src/Play_ground.cpp.o"
+"CMakeFiles/path_planning.dir/src/main.cpp.o"
 
 # External object files for target path_planning
 path_planning_EXTERNAL_OBJECTS =
 
-path_planning: CMakeFiles/path_planning.dir/src/Play_ground.cpp.o
+path_planning: CMakeFiles/path_planning.dir/src/main.cpp.o
 path_planning: CMakeFiles/path_planning.dir/build.make
 path_planning: /usr/local/lib/libmgl.so
 path_planning: CMakeFiles/path_planning.dir/link.txt
@@ -100,7 +100,7 @@ CMakeFiles/path_planning.dir/build: path_planning
 
 .PHONY : CMakeFiles/path_planning.dir/build
 
-CMakeFiles/path_planning.dir/requires: CMakeFiles/path_planning.dir/src/Play_ground.cpp.o.requires
+CMakeFiles/path_planning.dir/requires: CMakeFiles/path_planning.dir/src/main.cpp.o.requires
 
 .PHONY : CMakeFiles/path_planning.dir/requires
 
