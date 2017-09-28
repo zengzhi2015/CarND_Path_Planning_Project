@@ -245,7 +245,14 @@ int main() {
     s_dy.set_points(map_waypoints_s,map_waypoints_dy);
 
     int flag=1;
-    h.onMessage([&flag,&map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy, &s_x, &s_y, &s_dx, &s_dy](
+    vector<double> next_x_vals;
+    vector<double> next_y_vals;
+    vector<double> next_s_vals;
+    vector<double> next_d_vals;
+
+    h.onMessage([&flag, &next_x_vals, &next_y_vals, &next_s_vals, &next_d_vals,
+                        &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy,
+                        &s_x, &s_y, &s_dx, &s_dy](
             uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
             uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -290,30 +297,48 @@ int main() {
 
                     // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
-                    vector<double> next_x_vals;
-                    vector<double> next_y_vals;
-                    vector<double> next_s_vals;
 
-                    for(int i = 0; i < previous_path_x.size(); i++)
-                    {
-                        next_x_vals.push_back(previous_path_x[i]);
-                        next_y_vals.push_back(previous_path_y[i]);
+
+//                    for(int i = 0; i < previous_path_x.size(); i++)
+//                    {
+//                        next_x_vals.push_back(previous_path_x[i]);
+//                        next_y_vals.push_back(previous_path_y[i]);
+//                    }
+
+                    while(next_x_vals.size()>previous_path_x.size()) {
+                        next_x_vals.erase(next_x_vals.begin());
+                        next_y_vals.erase(next_y_vals.begin());
+                        next_d_vals.erase(next_d_vals.begin());
+                        next_s_vals.erase(next_s_vals.begin());
                     }
 
 
-                    if(next_x_vals.size()<10 & flag != 99) {
+                    if(next_x_vals.size()<10) {
 
                         // 2.2.1. Get raw JMT trajectory
                         // Suppose the period T is 2 second.
                         // The number of path points is: 2/0.02 = 100
-                        vector<double> start_s = {car_s,0,0};
-                        vector<double> end_s = {car_s+100,0,0};
-                        vector<double> start_d = {car_d,0,0};
-                        vector<double> end_d = {car_d+flag*4,0,0};
-                        flag = 99;
+                        vector<double> start_s;
+                        vector<double> end_s;
+                        vector<double> start_d;
+                        vector<double> end_d;
+                        if(previous_path_x.size()==0) {
+                            start_s = {car_s,40/2.24,0};
+                            end_s = {car_s+60,40/2.24,0};
+                            start_d = {car_d,0,0};
+                            end_d = {car_d+flag*4,0,0};
+                        }
+                        else {
+                            start_s = {next_s_vals[next_x_vals.size()-1],49/2.24,0};
+                            end_s = {next_s_vals[next_x_vals.size()-1]+100,49/2.24,0};
+                            start_d = {next_d_vals[next_d_vals.size()-1],0,0};
+                            end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
+                        }
+
+                        flag *= -1;
                         //cout << flag << endl;
                         //cout << car_d+flag*4 << endl;
-                        double T = 10;
+                        double T = 6;
                         JMT jmt_s, jmt_d;
                         jmt_s.cal_coefficients(start_s,end_s,T);
                         jmt_d.cal_coefficients(start_d,end_d,T);
@@ -323,15 +348,18 @@ int main() {
                         vector<double> path_points_x;
                         vector<double> path_points_y;
 
-                        for(double t=0;t<T;t+=0.02) {
+                        for(double t=0.02;t<T;t+=0.02) {
                             double temp_s = jmt_s.F(t);
                             double temp_d = jmt_d.F(t);
                             double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
                             double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
+                            cout << temp_s << '\t' << endl;
                             path_points_s.push_back(temp_s);
                             path_points_d.push_back(temp_d);
                             path_points_x.push_back(temp_x);
                             path_points_y.push_back(temp_y);
+                            next_s_vals.push_back(temp_s);
+                            next_d_vals.push_back(temp_d);
                             next_x_vals.push_back(temp_x);
                             next_y_vals.push_back(temp_y);
                         }
