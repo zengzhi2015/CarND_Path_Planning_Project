@@ -14,7 +14,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class JMT {
-public:
+private:
     vector<double> coefficients;
     vector<double> d_coefficients;
     vector<double> dd_coefficients;

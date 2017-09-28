@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 set(CMAKE_CXX_STANDARD 11)
 
 #set(sources src/main.cpp src/Play_ground.cpp)
-set(sources src/Play_ground.cpp src/JMT.cpp)
+set(sources src/main.cpp src/JMT.cpp)
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 

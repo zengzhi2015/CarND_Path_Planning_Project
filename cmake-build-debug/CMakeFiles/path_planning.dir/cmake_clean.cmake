@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/path_planning.dir/src/Play_ground.cpp.o"
+  "CMakeFiles/path_planning.dir/src/main.cpp.o"
   "CMakeFiles/path_planning.dir/src/JMT.cpp.o"
   "path_planning.pdb"
   "path_planning"

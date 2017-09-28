@@ -150,32 +150,32 @@ src/JMT.cpp.s:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/JMT.cpp.s
 .PHONY : src/JMT.cpp.s
 
-src/Play_ground.o: src/Play_ground.cpp.o
+src/main.o: src/main.cpp.o
 
-.PHONY : src/Play_ground.o
+.PHONY : src/main.o
 
 # target to build an object file
-src/Play_ground.cpp.o:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.o
-.PHONY : src/Play_ground.cpp.o
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-src/Play_ground.i: src/Play_ground.cpp.i
+src/main.i: src/main.cpp.i
 
-.PHONY : src/Play_ground.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-src/Play_ground.cpp.i:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.i
-.PHONY : src/Play_ground.cpp.i
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-src/Play_ground.s: src/Play_ground.cpp.s
+src/main.s: src/main.cpp.s
 
-.PHONY : src/Play_ground.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-src/Play_ground.cpp.s:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.s
-.PHONY : src/Play_ground.cpp.s
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -189,9 +189,9 @@ help:
 	@echo "... src/JMT.o"
 	@echo "... src/JMT.i"
 	@echo "... src/JMT.s"
-	@echo "... src/Play_ground.o"
-	@echo "... src/Play_ground.i"
-	@echo "... src/Play_ground.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 .PHONY : help
 
 

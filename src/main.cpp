@@ -9,6 +9,7 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
 #include "spline.h"
+#include "JMT.h"
 #include <mgl2/mgl.h>
 
 using namespace std;
@@ -206,7 +207,8 @@ int main() {
     s_dx.set_points(map_waypoints_s,map_waypoints_dx);
     s_dy.set_points(map_waypoints_s,map_waypoints_dy);
 
-    // 1.2. Modify the way points
+    // 1.2. Rescale way points
+    // 1.2.1 Modify the way points
     double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
     map_waypoints_x.clear();
     map_waypoints_y.clear();
@@ -219,7 +221,7 @@ int main() {
         map_waypoints_dy.push_back(s_dy(s));
     }
 
-    // 1.3. Rescale way points
+    // 1.2.2. Rescale way points
     map_waypoints_s.clear();
     for(int i=0;i<map_waypoints_x.size();i++) {
         if(i==0) {
@@ -292,9 +294,100 @@ int main() {
                     vector<double> next_y_vals;
                     vector<double> next_s_vals;
 
-
-
                     for(int i = 0; i < previous_path_x.size(); i++)
+                    {
+                        next_x_vals.push_back(previous_path_x[i]);
+                        next_y_vals.push_back(previous_path_y[i]);
+                    }
+
+
+                    if(next_x_vals.size()<10 & flag != 99) {
+
+                        // 2.2.1. Get raw JMT trajectory
+                        // Suppose the period T is 2 second.
+                        // The number of path points is: 2/0.02 = 100
+                        vector<double> start_s = {car_s,0,0};
+                        vector<double> end_s = {car_s+100,0,0};
+                        vector<double> start_d = {car_d,0,0};
+                        vector<double> end_d = {car_d+flag*4,0,0};
+                        flag = 99;
+                        //cout << flag << endl;
+                        //cout << car_d+flag*4 << endl;
+                        double T = 10;
+                        JMT jmt_s, jmt_d;
+                        jmt_s.cal_coefficients(start_s,end_s,T);
+                        jmt_d.cal_coefficients(start_d,end_d,T);
+
+                        vector<double> path_points_s;
+                        vector<double> path_points_d;
+                        vector<double> path_points_x;
+                        vector<double> path_points_y;
+
+                        for(double t=0;t<T;t+=0.02) {
+                            double temp_s = jmt_s.F(t);
+                            double temp_d = jmt_d.F(t);
+                            double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
+                            double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
+                            path_points_s.push_back(temp_s);
+                            path_points_d.push_back(temp_d);
+                            path_points_x.push_back(temp_x);
+                            path_points_y.push_back(temp_y);
+                            next_x_vals.push_back(temp_x);
+                            next_y_vals.push_back(temp_y);
+                        }
+
+/*                        // 2.2.2. Rescale the JMT trajectory
+                        vector<double> path_points_s_rescale;
+                        for(int i=0;i<path_points_s.size();i++) {
+                            if(i==0) {
+                                path_points_s_rescale.push_back(path_points_s[0]);
+                            }
+                            else {
+                                double delta_s = distance(path_points_x[i],path_points_y[i],path_points_x[i-1],path_points_y[i-1]);
+                                path_points_s_rescale.push_back(path_points_s_rescale[i-1]+delta_s);
+                            }
+                        }
+                        tk::spline s_x_local, s_y_local;
+                        s_x_local.set_points(path_points_s_rescale,path_points_x);
+                        s_y_local.set_points(path_points_s_rescale,path_points_y);
+                        for(int i=0;i<path_points_s.size();i++) {
+                            next_x_vals.push_back(s_x_local(path_points_s[i]));
+                            next_y_vals.push_back(s_y_local(path_points_s[i]));
+                        }*/
+
+
+/*                        // Generate raw path
+                        for(int i=0;i<1000;i++) {
+                            double temp_s = car_s + 0.445*(double)(i);
+                            double temp_d = 6+4*sin(M_PI*(double)i/150);
+                            next_x_vals.push_back(s_x(temp_s) + temp_d*s_dx(temp_s));
+                            next_y_vals.push_back(s_y(temp_s) + temp_d*s_dy(temp_s));
+                            if(i==0) {
+                                next_s_vals.push_back(car_s);
+                            }
+                            else {
+                                double delta_s = distance(next_x_vals[i],next_y_vals[i],next_x_vals[i-1],next_y_vals[i-1]);
+                                next_s_vals.push_back(next_s_vals[i-1]+delta_s);
+                            }
+                        }
+                        // rescale the path points
+                        tk::spline s_x_local, s_y_local;
+                        s_x_local.set_points(next_s_vals,next_x_vals);
+                        s_y_local.set_points(next_s_vals,next_y_vals);
+                        next_x_vals.clear();
+                        next_y_vals.clear();
+                        for(int i=0;i<1000;i++) {
+                            double temp_s = car_s + 0.445*(double)(i);
+                            next_x_vals.push_back(s_x_local(temp_s));
+                            next_y_vals.push_back(s_y_local(temp_s));
+                        }*/
+
+//                        flag=0;
+                    }
+
+
+
+/*                    for(int i = 0; i < previous_path_x.size(); i++)
                     {
                         next_x_vals.push_back(previous_path_x[i]);
                         next_y_vals.push_back(previous_path_y[i]);
@@ -303,15 +396,12 @@ int main() {
 
                     if(flag==1) {
 
-
+                        // Generate raw path
                         for(int i=0;i<2000;i++) {
-
-                            double temp_s = car_s + 0.44*(double)(i);
+                            double temp_s = car_s + 0.445*(double)(i);
                             double temp_d = 6+4*sin(M_PI*(double)i/150);
                             next_x_vals.push_back(s_x(temp_s) + temp_d*s_dx(temp_s));
                             next_y_vals.push_back(s_y(temp_s) + temp_d*s_dy(temp_s));
-
-
                             if(i==0) {
                                 next_s_vals.push_back(car_s);
                             }
@@ -319,22 +409,21 @@ int main() {
                                 double delta_s = distance(next_x_vals[i],next_y_vals[i],next_x_vals[i-1],next_y_vals[i-1]);
                                 next_s_vals.push_back(next_s_vals[i-1]+delta_s);
                             }
-
                         }
-
+                        // rescale the path points
                         tk::spline s_x_local, s_y_local;
                         s_x_local.set_points(next_s_vals,next_x_vals);
                         s_y_local.set_points(next_s_vals,next_y_vals);
                         next_x_vals.clear();
                         next_y_vals.clear();
                         for(int i=0;i<2000;i++) {
-                            double temp_s = car_s + 0.44*(double)(i);
+                            double temp_s = car_s + 0.445*(double)(i);
                             next_x_vals.push_back(s_x_local(temp_s));
                             next_y_vals.push_back(s_y_local(temp_s));
                         }
 
                         flag=0;
-                    }
+                    }*/
 
 
 /*                    // self way point test
