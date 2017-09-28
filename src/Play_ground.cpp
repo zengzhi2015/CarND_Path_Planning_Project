@@ -7,41 +7,70 @@
 #include <vector>
 #include "spline.h"
 #include <mgl2/mgl.h>
+#include "JMT.h"
 
 using namespace std;
 
+// JMT.cpp test
 int main() {
-    vector<double> X(5), Y(5);
-    X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
-    Y[0]=0.1; Y[1]=0.7; Y[2]=0.6; Y[3]=1.1; Y[4]=0.9;
+    vector<double> start = {0,10,0};
+    vector<double> end = {20,15,20};
+    double T = 2;
+    JMT jmt;
+    jmt.cal_coefficients(start,end,T);
+    cout << "jmt.coefficients" << endl;
+    for(auto e: jmt.coefficients) {cout << e << '\t';}
+    cout << endl;
+    cout << "jmt.d_coefficients" << endl;
+    for(auto e: jmt.d_coefficients) {cout << e << '\t';}
+    cout << endl;
+    cout << "jmt.dd_coefficients" << endl;
+    for(auto e: jmt.dd_coefficients) {cout << e << '\t';}
+    cout << endl;
+    cout << "jmt.ddd_coefficients" << endl;
+    for(auto e: jmt.ddd_coefficients) {cout << e << '\t';}
+    cout << endl;
 
-    tk::spline s;
-    s.set_points(X,Y);    // currently it is required that X is already sorted
+    double x = 2;
+    cout << "F(x) = " << jmt.F(x) << endl;
+    cout << "dF(x) = " << jmt.dF(x) << endl;
+    cout << "ddF(x) = " << jmt.ddF(x) << endl;
+    cout << "ddF(x) = " << jmt.dddF(x) << endl;
+}
 
-////    gr->WriteFrame("test.png");
-    mglData a(50), b(50);
-    for(int i=0;i<50;i++) {
-        a[i] = 2.2*(double)i/50.0;
-        b[i] = s(a[i]);
-    }
-    mglData A(5), B(5);
-    for(int i=0;i<5;i++) {
-        A[i] = X[i];
-        B[i] = Y[i];
-    }
 
-    mglGraph *gr = new mglGraph;
-    //gr->Plot((mglData)X,(mglData)Y,"ro ");
-    gr->SetRanges(0,2.5,0,2.5);
-    gr->Plot(A,B,"ro ");
-    gr->Plot(a,b,"k. ");
-    gr->Title("interpolation");
-
-    gr->Axis();
-    gr->Grid();
-    gr->Box();
-    //gr->SetOrigin(0.5,0.5)
-    gr->WriteFrame("test.png");
+//int main() {
+//    vector<double> X(5), Y(5);
+//    X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
+//    Y[0]=0.1; Y[1]=0.7; Y[2]=0.6; Y[3]=1.1; Y[4]=0.9;
+//
+//    tk::spline s;
+//    s.set_points(X,Y);    // currently it is required that X is already sorted
+//
+//////    gr->WriteFrame("test.png");
+//    mglData a(50), b(50);
+//    for(int i=0;i<50;i++) {
+//        a[i] = 2.2*(double)i/50.0;
+//        b[i] = s(a[i]);
+//    }
+//    mglData A(5), B(5);
+//    for(int i=0;i<5;i++) {
+//        A[i] = X[i];
+//        B[i] = Y[i];
+//    }
+//
+//    mglGraph *gr = new mglGraph;
+//    //gr->Plot((mglData)X,(mglData)Y,"ro ");
+//    gr->SetRanges(0,2.5,0,2.5);
+//    gr->Plot(A,B,"ro ");
+//    gr->Plot(a,b,"k. ");
+//    gr->Title("interpolation");
+//
+//    gr->Axis();
+//    gr->Grid();
+//    gr->Box();
+//    //gr->SetOrigin(0.5,0.5)
+//    gr->WriteFrame("test.png");
 
 
 //    mglData in(9), arg(99), e, s;
@@ -96,8 +125,8 @@ int main() {
 //    gr->FPlot("x/4"); gr->Label('y',"L",-1);
 //    gr->InPlot(0,0.5,0,0.5);  gr->SetRanges(1,0,4,0); gr->FPlot("4*x^2");
 
-    gr->WriteFrame("test.png");
-
-    return EXIT_SUCCESS;
-}
+//    gr->WriteFrame("test.png");
+//
+//    return EXIT_SUCCESS;
+//}
 

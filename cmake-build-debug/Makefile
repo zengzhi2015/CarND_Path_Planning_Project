@@ -123,32 +123,59 @@ path_planning/fast:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/build
 .PHONY : path_planning/fast
 
-src/main.o: src/main.cpp.o
+src/JMT.o: src/JMT.cpp.o
 
-.PHONY : src/main.o
+.PHONY : src/JMT.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/JMT.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/JMT.cpp.o
+.PHONY : src/JMT.cpp.o
 
-src/main.i: src/main.cpp.i
+src/JMT.i: src/JMT.cpp.i
 
-.PHONY : src/main.i
+.PHONY : src/JMT.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/JMT.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/JMT.cpp.i
+.PHONY : src/JMT.cpp.i
 
-src/main.s: src/main.cpp.s
+src/JMT.s: src/JMT.cpp.s
 
-.PHONY : src/main.s
+.PHONY : src/JMT.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/JMT.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/JMT.cpp.s
+.PHONY : src/JMT.cpp.s
+
+src/Play_ground.o: src/Play_ground.cpp.o
+
+.PHONY : src/Play_ground.o
+
+# target to build an object file
+src/Play_ground.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.o
+.PHONY : src/Play_ground.cpp.o
+
+src/Play_ground.i: src/Play_ground.cpp.i
+
+.PHONY : src/Play_ground.i
+
+# target to preprocess a source file
+src/Play_ground.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.i
+.PHONY : src/Play_ground.cpp.i
+
+src/Play_ground.s: src/Play_ground.cpp.s
+
+.PHONY : src/Play_ground.s
+
+# target to generate assembly for a file
+src/Play_ground.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/Play_ground.cpp.s
+.PHONY : src/Play_ground.cpp.s
 
 # Help Target
 help:
@@ -159,9 +186,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... path_planning"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/JMT.o"
+	@echo "... src/JMT.i"
+	@echo "... src/JMT.s"
+	@echo "... src/Play_ground.o"
+	@echo "... src/Play_ground.i"
+	@echo "... src/Play_ground.s"
 .PHONY : help
 
 
