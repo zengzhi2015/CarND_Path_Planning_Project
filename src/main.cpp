@@ -297,14 +297,6 @@ int main() {
 
                     // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
-
-
-//                    for(int i = 0; i < previous_path_x.size(); i++)
-//                    {
-//                        next_x_vals.push_back(previous_path_x[i]);
-//                        next_y_vals.push_back(previous_path_y[i]);
-//                    }
-
                     while(next_x_vals.size()>previous_path_x.size()) {
                         next_x_vals.erase(next_x_vals.begin());
                         next_y_vals.erase(next_y_vals.begin());
@@ -323,14 +315,14 @@ int main() {
                         vector<double> start_d;
                         vector<double> end_d;
                         if(previous_path_x.size()==0) {
-                            start_s = {car_s,40/2.24,0};
-                            end_s = {car_s+60,40/2.24,0};
+                            start_s = {car_s,0,0};
+                            end_s = {car_s+50,48/2.24,0};
                             start_d = {car_d,0,0};
-                            end_d = {car_d+flag*4,0,0};
+                            end_d = {car_d+flag*0,0,0};
                         }
                         else {
-                            start_s = {next_s_vals[next_x_vals.size()-1],49/2.24,0};
-                            end_s = {next_s_vals[next_x_vals.size()-1]+100,49/2.24,0};
+                            start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
+                            end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
                             start_d = {next_d_vals[next_d_vals.size()-1],0,0};
                             end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
                         }
@@ -353,18 +345,14 @@ int main() {
                             double temp_d = jmt_d.F(t);
                             double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
                             double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
-                            cout << temp_s << '\t' << endl;
+                            //cout << temp_s << '\t' << endl;
                             path_points_s.push_back(temp_s);
                             path_points_d.push_back(temp_d);
                             path_points_x.push_back(temp_x);
                             path_points_y.push_back(temp_y);
-                            next_s_vals.push_back(temp_s);
-                            next_d_vals.push_back(temp_d);
-                            next_x_vals.push_back(temp_x);
-                            next_y_vals.push_back(temp_y);
                         }
 
-/*                        // 2.2.2. Rescale the JMT trajectory
+                        // 2.2.2. Rescale the JMT trajectory
                         vector<double> path_points_s_rescale;
                         for(int i=0;i<path_points_s.size();i++) {
                             if(i==0) {
@@ -379,9 +367,11 @@ int main() {
                         s_x_local.set_points(path_points_s_rescale,path_points_x);
                         s_y_local.set_points(path_points_s_rescale,path_points_y);
                         for(int i=0;i<path_points_s.size();i++) {
-                            next_x_vals.push_back(s_x_local(path_points_s[i]));
-                            next_y_vals.push_back(s_y_local(path_points_s[i]));
-                        }*/
+                            next_s_vals.push_back(path_points_s[i]);
+                            next_d_vals.push_back(path_points_d[i]);
+                            next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
+                            next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
+                        }
 
 
 /*                        // Generate raw path

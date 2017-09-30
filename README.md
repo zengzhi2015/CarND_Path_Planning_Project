@@ -118,11 +118,40 @@ public:
 (Therefore, given a time interval T, there should be T/0.02 path points.)
 #### 2.2.1. Get raw JMT trajectory
 ```$xslt
-vector<double> start_s = {car_s,0,0};
-vector<double> end_s = {car_s+100,0,0};
-vector<double> start_d = {car_d,0,0};
-vector<double> end_d = {car_d+4,0,0};
-double T = 10;
+vector<double> next_x_vals;
+vector<double> next_y_vals;
+vector<double> next_s_vals;
+vector<double> next_d_vals;
+```
+```$xslt
+while(next_x_vals.size()>previous_path_x.size()) {
+    next_x_vals.erase(next_x_vals.begin());
+    next_y_vals.erase(next_y_vals.begin());
+    next_d_vals.erase(next_d_vals.begin());
+    next_s_vals.erase(next_s_vals.begin());
+}
+```
+```$xslt
+// Suppose the period T is 2 second.
+// The number of path points is: 2/0.02 = 100
+vector<double> start_s;
+vector<double> end_s;
+vector<double> start_d;
+vector<double> end_d;
+if(previous_path_x.size()==0) {
+    start_s = {car_s,0,0};
+    end_s = {car_s+50,48/2.24,0};
+    start_d = {car_d,0,0};
+    end_d = {car_d+flag*0,0,0};
+}
+else {
+    start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
+    end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
+    start_d = {next_d_vals[next_d_vals.size()-1],0,0};
+    end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
+}
+flag *= -1;
+double T = 6;
 JMT jmt_s, jmt_d;
 jmt_s.cal_coefficients(start_s,end_s,T);
 jmt_d.cal_coefficients(start_d,end_d,T);
@@ -132,11 +161,12 @@ vector<double> path_points_d;
 vector<double> path_points_x;
 vector<double> path_points_y;
 
-for(double t=0;t<T;t+=0.02) {
+for(double t=0.02;t<T;t+=0.02) {
     double temp_s = jmt_s.F(t);
     double temp_d = jmt_d.F(t);
     double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
     double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
+    cout << temp_s << '\t' << endl;
     path_points_s.push_back(temp_s);
     path_points_d.push_back(temp_d);
     path_points_x.push_back(temp_x);
@@ -159,8 +189,10 @@ tk::spline s_x_local, s_y_local;
 s_x_local.set_points(path_points_s_rescale,path_points_x);
 s_y_local.set_points(path_points_s_rescale,path_points_y);
 for(int i=0;i<path_points_s.size();i++) {
-    next_x_vals.push_back(s_x_local(path_points_s[i]));
-    next_y_vals.push_back(s_y_local(path_points_s[i]));
+    next_s_vals.push_back(path_points_s[i]);
+    next_d_vals.push_back(path_points_d[i]);
+    next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
+    next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
 }
 ```
 
