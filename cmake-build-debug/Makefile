@@ -123,6 +123,33 @@ path_planning/fast:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/build
 .PHONY : path_planning/fast
 
+src/COST.o: src/COST.cpp.o
+
+.PHONY : src/COST.o
+
+# target to build an object file
+src/COST.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/COST.cpp.o
+.PHONY : src/COST.cpp.o
+
+src/COST.i: src/COST.cpp.i
+
+.PHONY : src/COST.i
+
+# target to preprocess a source file
+src/COST.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/COST.cpp.i
+.PHONY : src/COST.cpp.i
+
+src/COST.s: src/COST.cpp.s
+
+.PHONY : src/COST.s
+
+# target to generate assembly for a file
+src/COST.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/COST.cpp.s
+.PHONY : src/COST.cpp.s
+
 src/JMT.o: src/JMT.cpp.o
 
 .PHONY : src/JMT.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... path_planning"
+	@echo "... src/COST.o"
+	@echo "... src/COST.i"
+	@echo "... src/COST.s"
 	@echo "... src/JMT.o"
 	@echo "... src/JMT.i"
 	@echo "... src/JMT.s"

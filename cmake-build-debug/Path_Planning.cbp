@@ -84,6 +84,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.cpp">
+			<Option target="path_planning"/>
+		</Unit>
+		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h">
+			<Option target="path_planning"/>
+		</Unit>
 		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.cpp">
 			<Option target="path_planning"/>
 		</Unit>
