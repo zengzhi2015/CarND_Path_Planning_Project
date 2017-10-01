@@ -195,6 +195,85 @@ for(int i=0;i<path_points_s.size();i++) {
     next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
 }
 ```
+## 3. Cost function
+
+The cost functions proposed in this project are really simple. There are four binary cost functions and one float 
+functions in total. 
+```$xslt
+class COST {
+public:
+    double collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion);
+    double speed_cost(JMT &jmt_s,double T);
+    double acceleration_cost(JMT &jmt_s,double T);
+    double jerk_cost(JMT &jmt_s,double T);
+    double efficiency_cost(JMT &jmt_s,double T);
+    double total_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion);
+};
+```
+The collision_cost function checks whether there would be a collision occur duaring the trajectory.
+```$xslt
+double COST::collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion) {
+    for(double t=0;t<T;t+=0.02){
+        double s_ego = jmt_s.F(t);
+        double d_ego = jmt_d.F(t);
+        for(auto vehical_info: sensor_fusion) {
+            double v_veh = sqrt(vehical_info[3]*vehical_info[3]+vehical_info[4]*vehical_info[4]);
+            double s_veh = vehical_info[5] + v_veh*(double)t;
+            double d_veh = vehical_info[6];
+            if(abs(d_ego-d_veh)<2 & abs(s_ego-s_veh)<4) {
+                return 1.0;
+            }
+        }
+    }
+    return 0.0;
+}
+```
+The speed, acceleration, and jerk functions check whether the ego car would exceed the corresponding limits.
+```$xslt
+double COST::speed_cost(JMT &jmt_s, double T) {
+    for(double t=0;t<T;t+=0.02){
+        if(jmt_s.dF(t)>49.0/2.24) {
+            return 1.0;
+        }
+    }
+    return 0.0;
+}
+
+double COST::acceleration_cost(JMT &jmt_s, double T) {
+    for(double t=0;t<T;t+=0.02){
+        if(jmt_s.ddF(t)>10.0) {
+            return 1.0;
+        }
+    }
+    return 0.0;
+}
+
+double COST::jerk_cost(JMT &jmt_s, double T) {
+    for(double t=0;t<T;t+=0.02){
+        if(jmt_s.dddF(t)>10.0) {
+            return 1.0;
+        }
+    }
+    return 0.0;
+}
+```
+The efficiency function calculate the extend to which the ego car reaches its maximum speed.
+```$xslt
+double COST::efficiency_cost(JMT &jmt_s, double T) {
+    return abs(T*49.0/2.24+jmt_s.F(0)-jmt_s.F(T))/(T*49.0/2.24);
+}
+```
+The total_cost is a weighted sum of all cost functions.
+```$xslt
+double COST::total_cost(JMT &jmt_s, JMT &jmt_d, double T, vector<vector<double >> sensor_fusion) {
+    return collision_cost(jmt_s, jmt_d, T, sensor_fusion) * 10 +
+            speed_cost(jmt_s,T)*10 +
+            acceleration_cost(jmt_s,T)*10 +
+            jerk_cost(jmt_s,T)*10 +
+            efficiency_cost(jmt_s,T);
+}
+```
+## 4. Optimal Path Planner
 
 ## Other instructions
    

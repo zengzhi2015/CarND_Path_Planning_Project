@@ -6,6 +6,18 @@
 
 #IncludeRegexTransform: 
 
+/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.cpp
+COST.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h
+
+/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h
+math.h
+-
+vector
+-
+JMT.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.h
+
 /home/zhi/Documents/CarND_Path_Planning_Project/src/Eigen-3.3/Eigen/Cholesky
 Core
 /home/zhi/Documents/CarND_Path_Planning_Project/src/Eigen-3.3/Eigen/Core
@@ -1141,6 +1153,8 @@ spline.h
 /home/zhi/Documents/CarND_Path_Planning_Project/src/spline.h
 JMT.h
 /home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.h
+COST.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h
 mgl2/mgl.h
 -
 

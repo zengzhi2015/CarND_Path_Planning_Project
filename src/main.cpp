@@ -10,6 +10,7 @@
 #include "json.hpp"
 #include "spline.h"
 #include "JMT.h"
+#include "COST.h"
 #include <mgl2/mgl.h>
 
 using namespace std;
@@ -334,6 +335,13 @@ int main() {
                         JMT jmt_s, jmt_d;
                         jmt_s.cal_coefficients(start_s,end_s,T);
                         jmt_d.cal_coefficients(start_d,end_d,T);
+                        COST cost;
+                        cout << "collision_cost: " << cost.collision_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
+                        cout << "speed_cost: " << cost.speed_cost(jmt_s,T) << endl;
+                        cout << "acceleration_cost: " << cost.acceleration_cost(jmt_s,T) << endl;
+                        cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
+                        cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
+                        cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
 
                         vector<double> path_points_s;
                         vector<double> path_points_d;
@@ -373,145 +381,7 @@ int main() {
                             next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
                         }
 
-
-/*                        // Generate raw path
-                        for(int i=0;i<1000;i++) {
-                            double temp_s = car_s + 0.445*(double)(i);
-                            double temp_d = 6+4*sin(M_PI*(double)i/150);
-                            next_x_vals.push_back(s_x(temp_s) + temp_d*s_dx(temp_s));
-                            next_y_vals.push_back(s_y(temp_s) + temp_d*s_dy(temp_s));
-                            if(i==0) {
-                                next_s_vals.push_back(car_s);
-                            }
-                            else {
-                                double delta_s = distance(next_x_vals[i],next_y_vals[i],next_x_vals[i-1],next_y_vals[i-1]);
-                                next_s_vals.push_back(next_s_vals[i-1]+delta_s);
-                            }
-                        }
-                        // rescale the path points
-                        tk::spline s_x_local, s_y_local;
-                        s_x_local.set_points(next_s_vals,next_x_vals);
-                        s_y_local.set_points(next_s_vals,next_y_vals);
-                        next_x_vals.clear();
-                        next_y_vals.clear();
-                        for(int i=0;i<1000;i++) {
-                            double temp_s = car_s + 0.445*(double)(i);
-                            next_x_vals.push_back(s_x_local(temp_s));
-                            next_y_vals.push_back(s_y_local(temp_s));
-                        }*/
-
-//                        flag=0;
                     }
-
-
-
-/*                    for(int i = 0; i < previous_path_x.size(); i++)
-                    {
-                        next_x_vals.push_back(previous_path_x[i]);
-                        next_y_vals.push_back(previous_path_y[i]);
-                    }
-
-
-                    if(flag==1) {
-
-                        // Generate raw path
-                        for(int i=0;i<2000;i++) {
-                            double temp_s = car_s + 0.445*(double)(i);
-                            double temp_d = 6+4*sin(M_PI*(double)i/150);
-                            next_x_vals.push_back(s_x(temp_s) + temp_d*s_dx(temp_s));
-                            next_y_vals.push_back(s_y(temp_s) + temp_d*s_dy(temp_s));
-                            if(i==0) {
-                                next_s_vals.push_back(car_s);
-                            }
-                            else {
-                                double delta_s = distance(next_x_vals[i],next_y_vals[i],next_x_vals[i-1],next_y_vals[i-1]);
-                                next_s_vals.push_back(next_s_vals[i-1]+delta_s);
-                            }
-                        }
-                        // rescale the path points
-                        tk::spline s_x_local, s_y_local;
-                        s_x_local.set_points(next_s_vals,next_x_vals);
-                        s_y_local.set_points(next_s_vals,next_y_vals);
-                        next_x_vals.clear();
-                        next_y_vals.clear();
-                        for(int i=0;i<2000;i++) {
-                            double temp_s = car_s + 0.445*(double)(i);
-                            next_x_vals.push_back(s_x_local(temp_s));
-                            next_y_vals.push_back(s_y_local(temp_s));
-                        }
-
-                        flag=0;
-                    }*/
-
-
-/*                    // self way point test
-                    for (int i = 0; i < 50; i++) {
-
-                        double s_temp = car_s + (double)(i+1)*0.4;
-                        double d_temp = 6;
-                        vector<double> xy_temp = getXY(s_temp, d_temp, map_waypoints_s, map_waypoints_x, map_waypoints_y);
-                        next_x_vals.push_back(xy_temp[0]);
-                        next_y_vals.push_back(xy_temp[1]);
-                    }*/
-
-/*
-                    // way point test
-                    int next_way_point = NextWaypoint(car_x,car_y,deg2rad(car_yaw),map_waypoints_x,map_waypoints_y);
-                    for(int i = 0; i < 10; i++)
-                    {
-                      double map_x = map_waypoints_x[next_way_point+i];
-                      double map_y = map_waypoints_y[next_way_point+i];
-                      next_x_vals.push_back(map_x);
-                      next_y_vals.push_back(map_y);
-                    }
-*/
-
-//                    // go streight test
-//                    double dist_inc = 0.5;
-//                    for(int i = 0; i < 50; i++)
-//                    {
-//                      next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
-//                      next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
-//                    }
-
-/*
-                    // circling test
-                    double pos_x;
-                    double pos_y;
-                    double angle;
-                    int path_size = previous_path_x.size();
-
-                    for(int i = 0; i < path_size; i++)
-                    {
-                        next_x_vals.push_back(previous_path_x[i]);
-                        next_y_vals.push_back(previous_path_y[i]);
-                    }
-
-                    if(path_size == 0)
-                    {
-                        pos_x = car_x;
-                        pos_y = car_y;
-                        angle = deg2rad(car_yaw);
-                    }
-                    else
-                    {
-                        pos_x = previous_path_x[path_size-1];
-                        pos_y = previous_path_y[path_size-1];
-
-                        double pos_x2 = previous_path_x[path_size-2];
-                        double pos_y2 = previous_path_y[path_size-2];
-                        angle = atan2(pos_y-pos_y2,pos_x-pos_x2);
-                    }
-
-                    double dist_inc = 0.5;
-                    for(int i = 0; i < 50-path_size; i++)
-                    {
-                        next_x_vals.push_back(pos_x+(dist_inc)*cos(angle+(i+1)*(pi()/100)));
-                        next_y_vals.push_back(pos_y+(dist_inc)*sin(angle+(i+1)*(pi()/100)));
-                        pos_x += (dist_inc)*cos(angle+(i+1)*(pi()/100));
-                        pos_y += (dist_inc)*sin(angle+(i+1)*(pi()/100));
-                    }
-*/
 
                     // End
                     msgJson["next_x"] = next_x_vals;

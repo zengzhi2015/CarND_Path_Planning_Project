@@ -18,6 +18,7 @@ public:
     double acceleration_cost(JMT &jmt_s,double T);
     double jerk_cost(JMT &jmt_s,double T);
     double efficiency_cost(JMT &jmt_s,double T);
+    double total_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion);
 };
 
 
