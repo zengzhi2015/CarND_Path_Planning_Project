@@ -8,9 +8,7 @@ double COST::collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<doubl
     for(double t=0;t<T;t+=0.02){
         double s_ego = jmt_s.F(t);
         double d_ego = jmt_d.F(t);
-        if(d_ego < 1 | d_ego>11) {
-            return 1.0;
-        }
+        // check whether crash with other cars
         for(auto vehical_info: sensor_fusion) {
             double v_veh = sqrt(vehical_info[3]*vehical_info[3]+vehical_info[4]*vehical_info[4]);
             double s_veh = vehical_info[5] + v_veh*(double)t;

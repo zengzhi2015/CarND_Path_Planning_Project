@@ -1072,6 +1072,16 @@ vector
 Eigen-3.3/Eigen/Dense
 /home/zhi/Documents/CarND_Path_Planning_Project/src/Eigen-3.3/Eigen/Dense
 
+/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.cpp
+OPTPATH.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.h
+
+/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.h
+JMT.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.h
+COST.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h
+
 /home/zhi/Documents/CarND_Path_Planning_Project/src/json.hpp
 algorithm
 -
@@ -1155,6 +1165,8 @@ JMT.h
 /home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.h
 COST.h
 /home/zhi/Documents/CarND_Path_Planning_Project/src/COST.h
+OPTPATH.h
+/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.h
 mgl2/mgl.h
 -
 

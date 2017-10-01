@@ -11,6 +11,7 @@
 #include "spline.h"
 #include "JMT.h"
 #include "COST.h"
+#include "OPTPATH.h"
 #include <mgl2/mgl.h>
 
 using namespace std;
@@ -342,6 +343,10 @@ int main() {
                         cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
                         cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
                         cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
+                        OPTPATH optpath_planner;
+                        cout << "Maximum end velocity: "
+                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
+                             << endl;
 
                         vector<double> path_points_s;
                         vector<double> path_points_d;

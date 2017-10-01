@@ -177,6 +177,33 @@ src/JMT.cpp.s:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/JMT.cpp.s
 .PHONY : src/JMT.cpp.s
 
+src/OPTPATH.o: src/OPTPATH.cpp.o
+
+.PHONY : src/OPTPATH.o
+
+# target to build an object file
+src/OPTPATH.cpp.o:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/OPTPATH.cpp.o
+.PHONY : src/OPTPATH.cpp.o
+
+src/OPTPATH.i: src/OPTPATH.cpp.i
+
+.PHONY : src/OPTPATH.i
+
+# target to preprocess a source file
+src/OPTPATH.cpp.i:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/OPTPATH.cpp.i
+.PHONY : src/OPTPATH.cpp.i
+
+src/OPTPATH.s: src/OPTPATH.cpp.s
+
+.PHONY : src/OPTPATH.s
+
+# target to generate assembly for a file
+src/OPTPATH.cpp.s:
+	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/src/OPTPATH.cpp.s
+.PHONY : src/OPTPATH.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -219,6 +246,9 @@ help:
 	@echo "... src/JMT.o"
 	@echo "... src/JMT.i"
 	@echo "... src/JMT.s"
+	@echo "... src/OPTPATH.o"
+	@echo "... src/OPTPATH.i"
+	@echo "... src/OPTPATH.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

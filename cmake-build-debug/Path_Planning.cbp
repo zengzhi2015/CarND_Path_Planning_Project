@@ -96,6 +96,12 @@
 		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/JMT.h">
 			<Option target="path_planning"/>
 		</Unit>
+		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.cpp">
+			<Option target="path_planning"/>
+		</Unit>
+		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/OPTPATH.h">
+			<Option target="path_planning"/>
+		</Unit>
 		<Unit filename="/home/zhi/Documents/CarND_Path_Planning_Project/src/main.cpp">
 			<Option target="path_planning"/>
 		</Unit>

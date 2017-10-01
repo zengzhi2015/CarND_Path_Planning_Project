@@ -195,7 +195,7 @@ for(int i=0;i<path_points_s.size();i++) {
     next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
 }
 ```
-## 3. Cost function
+## 3. Cost functions
 
 The cost functions proposed in this project are really simple. There are four binary cost functions and one float 
 functions in total. 
@@ -210,7 +210,7 @@ public:
     double total_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion);
 };
 ```
-The collision_cost function checks whether there would be a collision occur duaring the trajectory.
+The collision_cost function checks whether there would be a collision during the trajectory.
 ```$xslt
 double COST::collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion) {
     for(double t=0;t<T;t+=0.02){
@@ -274,6 +274,39 @@ double COST::total_cost(JMT &jmt_s, JMT &jmt_d, double T, vector<vector<double >
 }
 ```
 ## 4. Optimal Path Planner
+The start states of the ego car is known. The end state of the ego car is to be optimized. Once the end state of the ego 
+car is given, the path of the car is determined. Let us take a look at the possible range of the end state of the ego
+car. The end stat of the car is of the form [s, v_s, a_s, d, v_d, a_d], where 'v_' and 'a_' indicate the velocity and 
+the acceleration respectively. Assume that the end state of the car is not a dynamic state. We have a_s = 0, v_d = 0, and 
+a_d = 0. Further assume that the car should always at the center of the lane. We have d belonging to {2,6,10}. Similarly,
+we could assume that s belonging to {10, 20, 30, 40, ..., T*50/2.24}. So, there is only the range of v_s to be determined.
+We know that the end speed of the car should be as large as possible as long as it is not exceed the limit. Therefore, we 
+should first determine the maximum speed of the ego car at the end of the trajectory.
+
+### 4.1. Maximum end speed of the ego car
+If there is no car at the front of the ego car when the ego car is at the end of the trajectory, the maximum end speed 
+of the ego car is just the speed limit. If there is a car in front of the ego car at the end of the trajectory, the 
+maximum end speed of the ego car is the speed of the front car.
+```$xslt
+double OPTPATH::vmax_at_T(double ego_s_at_T, double ego_d_at_T, double T, vector<vector<double >> sensor_fusion) {
+    double min_distance = 9999999.0;
+    double nearest_car_velocity = 49.0/2.24; // initial value is the speed limit
+    for(auto vehical_info: sensor_fusion) {
+        double v_veh = sqrt(vehical_info[3]*vehical_info[3]+vehical_info[4]*vehical_info[4]);
+        double s_veh = vehical_info[5] + v_veh*T;
+        double d_veh = vehical_info[6];
+        if(abs(ego_d_at_T-d_veh)<1 & ego_s_at_T<s_veh & s_veh-ego_s_at_T<50 & s_veh-ego_s_at_T<min_distance) {
+            // if the two cars car near enough
+            min_distance = s_veh-ego_s_at_T;
+            nearest_car_velocity = min(v_veh,nearest_car_velocity);
+        }
+    }
+    return nearest_car_velocity;
+}
+```
+
+### 4.2. Optimal path generation
+
 
 ## Other instructions
    
