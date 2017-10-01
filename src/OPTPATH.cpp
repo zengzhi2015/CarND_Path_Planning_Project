@@ -24,7 +24,7 @@ void OPTPATH::cal_optimal_path(vector<double> &start_s, vector<double> &start_d,
                                vector<vector<double >> sensor_fusion, JMT &opt_jmt_s, JMT &opt_jmt_d) {
     // initialization
     vector<double> end_p_s;
-    for(double s=0;s<T*50/2.24;s+=10) {
+    for(double s=start_s[0];s<start_s[0]+T*50/2.24;s+=10) {
         end_p_s.push_back(s);
     }
     vector<double> end_p_d = {2,6,10};

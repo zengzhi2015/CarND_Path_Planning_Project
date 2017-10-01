@@ -313,29 +313,31 @@ int main() {
                         // Suppose the period T is 2 second.
                         // The number of path points is: 2/0.02 = 100
                         vector<double> start_s;
-                        vector<double> end_s;
+                        //vector<double> end_s;
                         vector<double> start_d;
-                        vector<double> end_d;
+                        //vector<double> end_d;
                         if(previous_path_x.size()==0) {
                             start_s = {car_s,0,0};
-                            end_s = {car_s+50,48/2.24,0};
+                            //end_s = {car_s+50,48/2.24,0};
                             start_d = {car_d,0,0};
-                            end_d = {car_d+flag*0,0,0};
+                            //end_d = {car_d+flag*0,0,0};
                         }
                         else {
                             start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
-                            end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
+                            //end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
                             start_d = {next_d_vals[next_d_vals.size()-1],0,0};
-                            end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
+                            //end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
                         }
 
-                        flag *= -1;
+                        //flag *= -1;
                         //cout << flag << endl;
                         //cout << car_d+flag*4 << endl;
                         double T = 6;
                         JMT jmt_s, jmt_d;
-                        jmt_s.cal_coefficients(start_s,end_s,T);
-                        jmt_d.cal_coefficients(start_d,end_d,T);
+                        //jmt_s.cal_coefficients(start_s,end_s,T);
+                        //jmt_d.cal_coefficients(start_d,end_d,T);
+                        OPTPATH optpath_planner;
+                        optpath_planner.cal_optimal_path(start_s,start_d,T,sensor_fusion,jmt_s,jmt_d);
                         COST cost;
                         cout << "collision_cost: " << cost.collision_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
                         cout << "speed_cost: " << cost.speed_cost(jmt_s,T) << endl;
@@ -343,10 +345,43 @@ int main() {
                         cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
                         cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
                         cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
-                        OPTPATH optpath_planner;
-                        cout << "Maximum end velocity: "
-                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
-                             << endl;
+
+//                        cout << "Maximum end velocity: "
+//                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
+//                             << endl;
+
+
+//                        if(previous_path_x.size()==0) {
+//                            start_s = {car_s,0,0};
+//                            end_s = {car_s+50,48/2.24,0};
+//                            start_d = {car_d,0,0};
+//                            end_d = {car_d+flag*0,0,0};
+//                        }
+//                        else {
+//                            start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
+//                            end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
+//                            start_d = {next_d_vals[next_d_vals.size()-1],0,0};
+//                            end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
+//                        }
+//
+//                        flag *= -1;
+//                        //cout << flag << endl;
+//                        //cout << car_d+flag*4 << endl;
+//                        double T = 6;
+//                        JMT jmt_s, jmt_d;
+//                        jmt_s.cal_coefficients(start_s,end_s,T);
+//                        jmt_d.cal_coefficients(start_d,end_d,T);
+//                        COST cost;
+//                        cout << "collision_cost: " << cost.collision_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
+//                        cout << "speed_cost: " << cost.speed_cost(jmt_s,T) << endl;
+//                        cout << "acceleration_cost: " << cost.acceleration_cost(jmt_s,T) << endl;
+//                        cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
+//                        cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
+//                        cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
+//                        OPTPATH optpath_planner;
+//                        cout << "Maximum end velocity: "
+//                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
+//                             << endl;
 
                         vector<double> path_points_s;
                         vector<double> path_points_d;
