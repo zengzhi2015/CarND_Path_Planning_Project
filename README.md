@@ -276,12 +276,12 @@ double COST::total_cost(JMT &jmt_s, JMT &jmt_d, double T, vector<vector<double >
 ## 4. Optimal Path Planner
 The start states of the ego car is known. The end state of the ego car is to be optimized. Once the end state of the ego 
 car is given, the path of the car is determined. Let us take a look at the possible range of the end state of the ego
-car. The end stat of the car is of the form [s, v_s, a_s, d, v_d, a_d], where 'v_' and 'a_' indicate the velocity and 
-the acceleration respectively. Assume that the end state of the car is not a dynamic state. We have a_s = 0, v_d = 0, and 
-a_d = 0. Further assume that the car should always at the center of the lane. We have d belonging to {2,6,10}. Similarly,
-we could assume that s belonging to {10, 20, 30, 40, ..., T*50/2.24}. So, there is only the range of v_s to be determined.
-We know that the end speed of the car should be as large as possible as long as it is not exceed the limit. Therefore, we 
-should first determine the maximum speed of the ego car at the end of the trajectory.
+car. The end stat of the car is of the form [p_s, v_s, a_s, p_d, v_d, a_d], where 'p_', '''v_' and 'a_' indicate the 
+position, velocity, and the acceleration respectively. Assume that the end state of the car is not a dynamic state. We have
+a_s = 0, v_d = 0, and a_d = 0. Further assume that the car should always at the center of the lane. We have d belonging 
+to {2,6,10}. Similarly, we could assume that s belonging to {10, 20, 30, 40, ..., T*50/2.24}. So, there is only the 
+range of v_s to be determined. We know that the end speed of the car should be as large as possible as long as it is not 
+exceed the limit. Therefore, we should first determine the maximum speed of the ego car at the end of the trajectory.
 
 ### 4.1. Maximum end speed of the ego car
 If there is no car at the front of the ego car when the ego car is at the end of the trajectory, the maximum end speed 
