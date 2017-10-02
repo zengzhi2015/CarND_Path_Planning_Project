@@ -168,7 +168,6 @@ path_planning: CMakeFiles/path_planning.dir/src/JMT.cpp.o
 path_planning: CMakeFiles/path_planning.dir/src/COST.cpp.o
 path_planning: CMakeFiles/path_planning.dir/src/OPTPATH.cpp.o
 path_planning: CMakeFiles/path_planning.dir/build.make
-path_planning: /usr/local/lib/libmgl.so
 path_planning: CMakeFiles/path_planning.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/zhi/Documents/CarND_Path_Planning_Project/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable path_planning"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/path_planning.dir/link.txt --verbose=$(VERBOSE)

@@ -22,19 +22,19 @@ link_directories(/usr/local/Cellar/libuv/1.11.0/lib)
 
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-FIND_PATH(MathGL_INCLUDE_DIRS NAMES mgl2/mgl.h
-        PATHS
-        /opt/local/include
-        /usr/include
-        /usr/local/include
-        )
-
-FIND_LIBRARY(MathGL_LIB NAMES mgl
-        PATHS
-        /opt/local/lib
-        /usr/local/lib
-        /usr/lib
-        )
+#FIND_PATH(MathGL_INCLUDE_DIRS NAMES mgl2/mgl.h
+#        PATHS
+#        /opt/local/include
+#        /usr/include
+#        /usr/local/include
+#        )
+#
+#FIND_LIBRARY(MathGL_LIB NAMES mgl
+#        PATHS
+#        /opt/local/lib
+#        /usr/local/lib
+#        /usr/lib
+#        )
 
 add_executable(path_planning ${sources})
 
@@ -43,4 +43,5 @@ target_link_libraries(path_planning
         ssl
         uv
         uWS
-        ${MathGL_LIB})
+#        ${MathGL_LIB}
+        )

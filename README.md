@@ -329,7 +329,12 @@ void OPTPATH::cal_optimal_path(vector<double> &start_s, vector<double> &start_d,
     opt_jmt_d.cal_coefficients(start_d,opt_end_d,T);
 }
 ```
-
+ ## 5. Result
+ The car can reach the goal stated in the rubric. However, it cannot always reach the goal. This is because we cannot
+ garnette the behavior of other cars. If a neighbouring car accelerate during the changing lane stage, a collision would occur.
+ In addition, we do not carefully deal with the way points of the second loop. Therefore, the behavior of the car would not
+ be gangrened after the first loop.
+ ![reach_the_goal](./img/reach_the_goal.png)
 
 
 ## Other instructions

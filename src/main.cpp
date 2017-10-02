@@ -195,6 +195,15 @@ int main() {
         map_waypoints_dy.push_back(d_y);
     }
 
+    // Extend the way points
+    for(int i=0;i<200;i++) {
+        map_waypoints_x.push_back(map_waypoints_x[i]);
+        map_waypoints_y.push_back(map_waypoints_y[i]);
+        map_waypoints_s.push_back(map_waypoints_s[i]+max_s);
+        map_waypoints_dx.push_back(map_waypoints_dx[i]);
+        map_waypoints_dy.push_back(map_waypoints_dy[i]);
+    }
+
 /*    // modification test
     for(int i=0;i<map_waypoints_x.size();i++) {
         map_waypoints_x[i] += 10*map_waypoints_dx[i];
@@ -211,12 +220,12 @@ int main() {
 
     // 1.2. Rescale way points
     // 1.2.1 Modify the way points
-    //double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
+    double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
     map_waypoints_x.clear();
     map_waypoints_y.clear();
     map_waypoints_dx.clear();
     map_waypoints_dy.clear();
-    for(double s=0;s<max_s;s+=1) {
+    for(double s=0;s<s_max;s+=1) {
         map_waypoints_x.push_back(s_x(s));
         map_waypoints_y.push_back(s_y(s));
         map_waypoints_dx.push_back(s_dx(s));
