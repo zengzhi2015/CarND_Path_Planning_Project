@@ -307,7 +307,7 @@ int main() {
                     }
 
 
-                    if(next_x_vals.size()<10) {
+                    if(next_x_vals.size()<50) {
 
                         // 2.2.1. Get raw JMT trajectory
                         // Suppose the period T is 2 second.
@@ -323,7 +323,8 @@ int main() {
                             //end_d = {car_d+flag*0,0,0};
                         }
                         else {
-                            start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
+                            double temp_v = (next_s_vals[next_x_vals.size()-1] - next_s_vals[next_x_vals.size()-2])/0.02;
+                            start_s = {next_s_vals[next_x_vals.size()-1],temp_v,0};
                             //end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
                             start_d = {next_d_vals[next_d_vals.size()-1],0,0};
                             //end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
@@ -332,7 +333,7 @@ int main() {
                         //flag *= -1;
                         //cout << flag << endl;
                         //cout << car_d+flag*4 << endl;
-                        double T = 6;
+                        double T = 3;
                         JMT jmt_s, jmt_d;
                         //jmt_s.cal_coefficients(start_s,end_s,T);
                         //jmt_d.cal_coefficients(start_d,end_d,T);
@@ -383,10 +384,10 @@ int main() {
 //                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
 //                             << endl;
 
-                        vector<double> path_points_s;
-                        vector<double> path_points_d;
-                        vector<double> path_points_x;
-                        vector<double> path_points_y;
+                        //vector<double> path_points_s;
+                        //vector<double> path_points_d;
+                        //vector<double> path_points_x;
+                        //vector<double> path_points_y;
 
                         for(double t=0.02;t<T;t+=0.02) {
                             double temp_s = jmt_s.F(t);
@@ -394,33 +395,43 @@ int main() {
                             double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
                             double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
                             //cout << temp_s << '\t' << endl;
-                            path_points_s.push_back(temp_s);
-                            path_points_d.push_back(temp_d);
-                            path_points_x.push_back(temp_x);
-                            path_points_y.push_back(temp_y);
+//                            path_points_s.push_back(temp_s);
+//                            path_points_d.push_back(temp_d);
+//                            path_points_x.push_back(temp_x);
+//                            path_points_y.push_back(temp_y);
+                            next_s_vals.push_back(temp_s);
+                            next_d_vals.push_back(temp_d);
+                            next_x_vals.push_back(temp_x);
+                            next_y_vals.push_back(temp_y);
                         }
 
-                        // 2.2.2. Rescale the JMT trajectory
-                        vector<double> path_points_s_rescale;
-                        for(int i=0;i<path_points_s.size();i++) {
-                            if(i==0) {
-                                path_points_s_rescale.push_back(path_points_s[0]);
-                            }
-                            else {
-                                double delta_s = distance(path_points_x[i],path_points_y[i],path_points_x[i-1],path_points_y[i-1]);
-                                path_points_s_rescale.push_back(path_points_s_rescale[i-1]+delta_s);
-                            }
-                        }
-                        tk::spline s_x_local, s_y_local;
-                        s_x_local.set_points(path_points_s_rescale,path_points_x);
-                        s_y_local.set_points(path_points_s_rescale,path_points_y);
-                        for(int i=0;i<path_points_s.size();i++) {
-                            next_s_vals.push_back(path_points_s[i]);
-                            next_d_vals.push_back(path_points_d[i]);
-                            next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
-                            next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
-                        }
-
+//                        // 2.2.2. Rescale the JMT trajectory
+//                        vector<double> path_points_s_rescale;
+//                        for(int i=0;i<path_points_s.size();i++) {
+//                            if(i==0) {
+//                                path_points_s_rescale.push_back(path_points_s[0]);
+//                            }
+//                            else {
+//                                double delta_s = distance(path_points_x[i],path_points_y[i],path_points_x[i-1],path_points_y[i-1]);
+//                                path_points_s_rescale.push_back(path_points_s_rescale[i-1]+delta_s);
+//                            }
+//                        }
+//                        tk::spline s_x_local, s_y_local;// s_d_local;
+//                        s_x_local.set_points(path_points_s_rescale,path_points_x);
+//                        s_y_local.set_points(path_points_s_rescale,path_points_y);
+//                        //s_d_local.set_points(path_points_s,path_points_d);
+//                        for(int i=0;i<path_points_s.size();i++) {
+//                            //cout << temp_s << '\t' << endl;
+//                            next_s_vals.push_back(path_points_s[i]);
+//                            next_d_vals.push_back(path_points_d[i]);
+//                            //next_s_vals.push_back(path_points_s_rescale[i]);
+//                            //next_d_vals.push_back(s_d_local(path_points_s_rescale[i]));
+//                            //next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
+//                            //next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
+//                            next_x_vals.push_back(path_points_x[i]);
+//                            next_y_vals.push_back(path_points_y[i]);
+//                        }
+//
                     }
 
                     // End
