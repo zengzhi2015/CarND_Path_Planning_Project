@@ -21,10 +21,8 @@ double COST::collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<doubl
         }
     }
     if(min_distence<30) {
-        return 30.0/min_distence;
-        //return 1.0;
+        return 5.0/min_distence;
     }
-    // std::cout << min_distence << endl;
     return 0.0;
 }
 

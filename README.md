@@ -116,7 +116,6 @@ public:
 ### 2.2. Generate accurate path points
 * Note that the time for the simulator to read a point is 0.02 seconds!  
 (Therefore, given a time interval T, there should be T/0.02 path points.)
-#### 2.2.1. Get raw JMT trajectory
 ```$xslt
 vector<double> next_x_vals;
 vector<double> next_y_vals;
@@ -135,70 +134,44 @@ while(next_x_vals.size()>previous_path_x.size()) {
 // Suppose the period T is 2 second.
 // The number of path points is: 2/0.02 = 100
 vector<double> start_s;
-vector<double> end_s;
 vector<double> start_d;
-vector<double> end_d;
 if(previous_path_x.size()==0) {
     start_s = {car_s,0,0};
-    end_s = {car_s+50,48/2.24,0};
     start_d = {car_d,0,0};
-    end_d = {car_d+flag*0,0,0};
 }
 else {
-    start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
-    end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
+    double temp_v = (next_s_vals[next_x_vals.size()-1] - next_s_vals[next_x_vals.size()-2])/0.02;
+    start_s = {next_s_vals[next_x_vals.size()-1],temp_v,0};
     start_d = {next_d_vals[next_d_vals.size()-1],0,0};
-    end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
 }
-flag *= -1;
-double T = 6;
-JMT jmt_s, jmt_d;
-jmt_s.cal_coefficients(start_s,end_s,T);
-jmt_d.cal_coefficients(start_d,end_d,T);
 
-vector<double> path_points_s;
-vector<double> path_points_d;
-vector<double> path_points_x;
-vector<double> path_points_y;
+double T = 3;
+JMT jmt_s, jmt_d;
+OPTPATH optpath_planner;
+optpath_planner.cal_optimal_path(start_s,start_d,T,sensor_fusion,jmt_s,jmt_d);
+COST cost;
+cout << "collision_cost: " << cost.collision_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
+cout << "speed_cost: " << cost.speed_cost(jmt_s,T) << endl;
+cout << "acceleration_cost: " << cost.acceleration_cost(jmt_s,T) << endl;
+cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
+cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
+cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
 
 for(double t=0.02;t<T;t+=0.02) {
     double temp_s = jmt_s.F(t);
     double temp_d = jmt_d.F(t);
     double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
     double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
-    cout << temp_s << '\t' << endl;
-    path_points_s.push_back(temp_s);
-    path_points_d.push_back(temp_d);
-    path_points_x.push_back(temp_x);
-    path_points_y.push_back(temp_y);
+    next_s_vals.push_back(temp_s);
+    next_d_vals.push_back(temp_d);
+    next_x_vals.push_back(temp_x);
+    next_y_vals.push_back(temp_y);
 }
 ```
-#### 2.2.2. Rescale the JMT trajectory
-```
-vector<double> path_points_s_rescale;
-for(int i=0;i<path_points_s.size();i++) {
-    if(i==0) {
-        path_points_s_rescale.push_back(path_points_s[0]);
-    }
-    else {
-        double delta_s = distance(path_points_x[i],path_points_y[i],path_points_x[i-1],path_points_y[i-1]);
-        path_points_s_rescale.push_back(path_points_s_rescale[i-1]+delta_s);
-    }
-}
-tk::spline s_x_local, s_y_local;
-s_x_local.set_points(path_points_s_rescale,path_points_x);
-s_y_local.set_points(path_points_s_rescale,path_points_y);
-for(int i=0;i<path_points_s.size();i++) {
-    next_s_vals.push_back(path_points_s[i]);
-    next_d_vals.push_back(path_points_d[i]);
-    next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
-    next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
-}
-```
+
 ## 3. Cost functions
 
-The cost functions proposed in this project are really simple. There are four binary cost functions and one float 
-functions in total. 
+The cost functions proposed in this project are really simple. There are six cost functions in total. 
 ```$xslt
 class COST {
 public:
@@ -213,17 +186,22 @@ public:
 The collision_cost function checks whether there would be a collision during the trajectory.
 ```$xslt
 double COST::collision_cost(JMT &jmt_s,JMT &jmt_d, double T, vector<vector<double >> sensor_fusion) {
+    double min_distence = 999999;
     for(double t=0;t<T;t+=0.02){
         double s_ego = jmt_s.F(t);
         double d_ego = jmt_d.F(t);
+        // check whether crash with other cars
         for(auto vehical_info: sensor_fusion) {
             double v_veh = sqrt(vehical_info[3]*vehical_info[3]+vehical_info[4]*vehical_info[4]);
-            double s_veh = vehical_info[5] + v_veh*(double)t;
+            double s_veh = vehical_info[5] + v_veh*t;
             double d_veh = vehical_info[6];
-            if(abs(d_ego-d_veh)<2 & abs(s_ego-s_veh)<4) {
-                return 1.0;
+            if(abs(d_ego-d_veh)<2 & abs(s_ego-s_veh)<min_distence) {
+                min_distence = abs(s_ego-s_veh);
             }
         }
+    }
+    if(min_distence<30) {
+        return 5.0/min_distence;
     }
     return 0.0;
 }
@@ -232,7 +210,7 @@ The speed, acceleration, and jerk functions check whether the ego car would exce
 ```$xslt
 double COST::speed_cost(JMT &jmt_s, double T) {
     for(double t=0;t<T;t+=0.02){
-        if(jmt_s.dF(t)>49.0/2.24) {
+        if(jmt_s.dF(t)>48.0/2.24) {
             return 1.0;
         }
     }
@@ -241,7 +219,7 @@ double COST::speed_cost(JMT &jmt_s, double T) {
 
 double COST::acceleration_cost(JMT &jmt_s, double T) {
     for(double t=0;t<T;t+=0.02){
-        if(jmt_s.ddF(t)>10.0) {
+        if(jmt_s.ddF(t)>9.0) {
             return 1.0;
         }
     }
@@ -250,7 +228,7 @@ double COST::acceleration_cost(JMT &jmt_s, double T) {
 
 double COST::jerk_cost(JMT &jmt_s, double T) {
     for(double t=0;t<T;t+=0.02){
-        if(jmt_s.dddF(t)>10.0) {
+        if(jmt_s.dddF(t)>9.0) {
             return 1.0;
         }
     }
@@ -260,7 +238,7 @@ double COST::jerk_cost(JMT &jmt_s, double T) {
 The efficiency function calculate the extend to which the ego car reaches its maximum speed.
 ```$xslt
 double COST::efficiency_cost(JMT &jmt_s, double T) {
-    return abs(T*49.0/2.24+jmt_s.F(0)-jmt_s.F(T))/(T*49.0/2.24);
+    return abs(T*48.0/2.24+jmt_s.F(0)-jmt_s.F(T))/(T*48.0/2.24);
 }
 ```
 The total_cost is a weighted sum of all cost functions.
@@ -279,7 +257,7 @@ car is given, the path of the car is determined. Let us take a look at the possi
 car. The end stat of the car is of the form [p_s, v_s, a_s, p_d, v_d, a_d], where 'p_', '''v_' and 'a_' indicate the 
 position, velocity, and the acceleration respectively. Assume that the end state of the car is not a dynamic state. We have
 a_s = 0, v_d = 0, and a_d = 0. Further assume that the car should always at the center of the lane. We have d belonging 
-to {2,6,10}. Similarly, we could assume that s belonging to {10, 20, 30, 40, ..., T*50/2.24}. So, there is only the 
+to {2,6,10}. Similarly, we could assume that s belonging to {3, 6, 9, 12, ..., T*50/2.24}. So, there is only the 
 range of v_s to be determined. We know that the end speed of the car should be as large as possible as long as it is not 
 exceed the limit. Therefore, we should first determine the maximum speed of the ego car at the end of the trajectory.
 
@@ -290,12 +268,12 @@ maximum end speed of the ego car is the speed of the front car.
 ```$xslt
 double OPTPATH::vmax_at_T(double ego_s_at_T, double ego_d_at_T, double T, vector<vector<double >> sensor_fusion) {
     double min_distance = 9999999.0;
-    double nearest_car_velocity = 49.0/2.24; // initial value is the speed limit
+    double nearest_car_velocity = 47.0/2.24; // initial value is the speed limit
     for(auto vehical_info: sensor_fusion) {
         double v_veh = sqrt(vehical_info[3]*vehical_info[3]+vehical_info[4]*vehical_info[4]);
         double s_veh = vehical_info[5] + v_veh*T;
         double d_veh = vehical_info[6];
-        if(abs(ego_d_at_T-d_veh)<1 & ego_s_at_T<s_veh & s_veh-ego_s_at_T<50 & s_veh-ego_s_at_T<min_distance) {
+        if(abs(ego_d_at_T-d_veh)<2 & ego_s_at_T<s_veh & s_veh-ego_s_at_T<30 & s_veh-ego_s_at_T<min_distance) {
             // if the two cars car near enough
             min_distance = s_veh-ego_s_at_T;
             nearest_car_velocity = min(v_veh,nearest_car_velocity);
@@ -306,6 +284,52 @@ double OPTPATH::vmax_at_T(double ego_s_at_T, double ego_d_at_T, double T, vector
 ```
 
 ### 4.2. Optimal path generation
+This part is relatively simple. One just enumerate all possible combinations of parameters and choose the one with the 
+lowest total cost.
+```$xslt
+void OPTPATH::cal_optimal_path(vector<double> &start_s, vector<double> &start_d, double T,
+                               vector<vector<double >> sensor_fusion, JMT &opt_jmt_s, JMT &opt_jmt_d) {
+    // initialization
+    vector<double> end_p_s;
+    for(double s=start_s[0];s<start_s[0]+T*50/2.24;s+=3) {
+        end_p_s.push_back(s);
+    }
+    vector<double> end_p_d = {2,6,10};
+
+    // optimization
+    double min_cost = 9999999;
+    vector<double> opt_end_s;
+    vector<double> opt_end_d;
+
+    for(auto p_d: end_p_d) {
+        for(auto p_s: end_p_s) {
+            double max_end_v_s = vmax_at_T(p_s,p_d,T,sensor_fusion);
+            //vector<double> end_v_s = {max_end_v_s,max_end_v_s*0.9,max_end_v_s*0.8,max_end_v_s*0.7, max_end_v_s*0.6,max_end_v_s*0.5,max_end_v_s*0.4, max_end_v_s*0.3};
+            vector<double> end_v_s = {max_end_v_s,max_end_v_s*0.95,max_end_v_s*0.75,max_end_v_s*0.5};
+            for(auto v_s: end_v_s) {
+                vector<double> temp_end_s = {p_s,v_s,0.0};
+                vector<double> temp_end_d = {p_d,0.0,0.0};
+                JMT temp_jmt_s, temp_jmt_d;
+                temp_jmt_s.cal_coefficients(start_s,temp_end_s,T);
+                temp_jmt_d.cal_coefficients(start_d,temp_end_d,T);
+                COST cost;
+                double temp_cost = cost.total_cost(temp_jmt_s,temp_jmt_d,T,sensor_fusion);
+                if(temp_cost<min_cost) {
+                    min_cost = temp_cost;
+                    opt_end_s.clear();
+                    opt_end_s.assign(temp_end_s.begin(),temp_end_s.end());
+                    opt_end_d.clear();
+                    opt_end_d.assign(temp_end_d.begin(),temp_end_d.end());
+                }
+            }
+        }
+    }
+
+    opt_jmt_s.cal_coefficients(start_s,opt_end_s,T);
+    opt_jmt_d.cal_coefficients(start_d,opt_end_d,T);
+}
+```
+
 
 
 ## Other instructions

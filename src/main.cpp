@@ -211,12 +211,12 @@ int main() {
 
     // 1.2. Rescale way points
     // 1.2.1 Modify the way points
-    double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
+    //double s_max = *max_element(begin(map_waypoints_s),end(map_waypoints_s));
     map_waypoints_x.clear();
     map_waypoints_y.clear();
     map_waypoints_dx.clear();
     map_waypoints_dy.clear();
-    for(double s=0;s<s_max;s+=1) {
+    for(double s=0;s<max_s;s+=1) {
         map_waypoints_x.push_back(s_x(s));
         map_waypoints_y.push_back(s_y(s));
         map_waypoints_dx.push_back(s_dx(s));
@@ -236,25 +236,19 @@ int main() {
     }
 
     // 1.4. Modify the interpolation
-//    tk::spline s_x_mod, s_y_mod, s_dx_mod, s_dy_mod;
-//    s_x_mod.set_points(map_waypoints_s,map_waypoints_x);
-//    s_y_mod.set_points(map_waypoints_s,map_waypoints_y);
-//    s_dx_mod.set_points(map_waypoints_s,map_waypoints_dx);
-//    s_dy_mod.set_points(map_waypoints_s,map_waypoints_dy);
     s_x.set_points(map_waypoints_s,map_waypoints_x);
     s_y.set_points(map_waypoints_s,map_waypoints_y);
     s_dx.set_points(map_waypoints_s,map_waypoints_dx);
     s_dy.set_points(map_waypoints_s,map_waypoints_dy);
 
-    int flag=1;
     vector<double> next_x_vals;
     vector<double> next_y_vals;
     vector<double> next_s_vals;
     vector<double> next_d_vals;
 
-    h.onMessage([&flag, &next_x_vals, &next_y_vals, &next_s_vals, &next_d_vals,
-                        &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy,
-                        &s_x, &s_y, &s_dx, &s_dy](
+    h.onMessage([&next_x_vals, &next_y_vals, &next_s_vals, &next_d_vals,
+                 &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy,
+                 &s_x, &s_y, &s_dx, &s_dy](
             uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
             uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -313,30 +307,19 @@ int main() {
                         // Suppose the period T is 2 second.
                         // The number of path points is: 2/0.02 = 100
                         vector<double> start_s;
-                        //vector<double> end_s;
                         vector<double> start_d;
-                        //vector<double> end_d;
                         if(previous_path_x.size()==0) {
                             start_s = {car_s,0,0};
-                            //end_s = {car_s+50,48/2.24,0};
                             start_d = {car_d,0,0};
-                            //end_d = {car_d+flag*0,0,0};
                         }
                         else {
                             double temp_v = (next_s_vals[next_x_vals.size()-1] - next_s_vals[next_x_vals.size()-2])/0.02;
                             start_s = {next_s_vals[next_x_vals.size()-1],temp_v,0};
-                            //end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
                             start_d = {next_d_vals[next_d_vals.size()-1],0,0};
-                            //end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
                         }
 
-                        //flag *= -1;
-                        //cout << flag << endl;
-                        //cout << car_d+flag*4 << endl;
                         double T = 3;
                         JMT jmt_s, jmt_d;
-                        //jmt_s.cal_coefficients(start_s,end_s,T);
-                        //jmt_d.cal_coefficients(start_d,end_d,T);
                         OPTPATH optpath_planner;
                         optpath_planner.cal_optimal_path(start_s,start_d,T,sensor_fusion,jmt_s,jmt_d);
                         COST cost;
@@ -347,91 +330,16 @@ int main() {
                         cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
                         cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
 
-//                        cout << "Maximum end velocity: "
-//                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
-//                             << endl;
-
-
-//                        if(previous_path_x.size()==0) {
-//                            start_s = {car_s,0,0};
-//                            end_s = {car_s+50,48/2.24,0};
-//                            start_d = {car_d,0,0};
-//                            end_d = {car_d+flag*0,0,0};
-//                        }
-//                        else {
-//                            start_s = {next_s_vals[next_x_vals.size()-1],48/2.24,0};
-//                            end_s = {next_s_vals[next_x_vals.size()-1]+120,48/2.24,0};
-//                            start_d = {next_d_vals[next_d_vals.size()-1],0,0};
-//                            end_d = {next_d_vals[next_d_vals.size()-1]+flag*4,0,0};
-//                        }
-//
-//                        flag *= -1;
-//                        //cout << flag << endl;
-//                        //cout << car_d+flag*4 << endl;
-//                        double T = 6;
-//                        JMT jmt_s, jmt_d;
-//                        jmt_s.cal_coefficients(start_s,end_s,T);
-//                        jmt_d.cal_coefficients(start_d,end_d,T);
-//                        COST cost;
-//                        cout << "collision_cost: " << cost.collision_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
-//                        cout << "speed_cost: " << cost.speed_cost(jmt_s,T) << endl;
-//                        cout << "acceleration_cost: " << cost.acceleration_cost(jmt_s,T) << endl;
-//                        cout << "jerk_cost: " << cost.jerk_cost(jmt_s,T) << endl;
-//                        cout << "efficiency_cost: " << cost.efficiency_cost(jmt_s,T) << endl;
-//                        cout << "total_cost: " << cost.total_cost(jmt_s,jmt_d,T,sensor_fusion) << endl;
-//                        OPTPATH optpath_planner;
-//                        cout << "Maximum end velocity: "
-//                             << optpath_planner.vmax_at_T(end_s[0],end_d[0],T,sensor_fusion)*2.24
-//                             << endl;
-
-                        //vector<double> path_points_s;
-                        //vector<double> path_points_d;
-                        //vector<double> path_points_x;
-                        //vector<double> path_points_y;
-
                         for(double t=0.02;t<T;t+=0.02) {
                             double temp_s = jmt_s.F(t);
                             double temp_d = jmt_d.F(t);
                             double temp_x = s_x(temp_s) + temp_d*s_dx(temp_s);
                             double temp_y = s_y(temp_s) + temp_d*s_dy(temp_s);
-                            //cout << temp_s << '\t' << endl;
-//                            path_points_s.push_back(temp_s);
-//                            path_points_d.push_back(temp_d);
-//                            path_points_x.push_back(temp_x);
-//                            path_points_y.push_back(temp_y);
                             next_s_vals.push_back(temp_s);
                             next_d_vals.push_back(temp_d);
                             next_x_vals.push_back(temp_x);
                             next_y_vals.push_back(temp_y);
                         }
-
-//                        // 2.2.2. Rescale the JMT trajectory
-//                        vector<double> path_points_s_rescale;
-//                        for(int i=0;i<path_points_s.size();i++) {
-//                            if(i==0) {
-//                                path_points_s_rescale.push_back(path_points_s[0]);
-//                            }
-//                            else {
-//                                double delta_s = distance(path_points_x[i],path_points_y[i],path_points_x[i-1],path_points_y[i-1]);
-//                                path_points_s_rescale.push_back(path_points_s_rescale[i-1]+delta_s);
-//                            }
-//                        }
-//                        tk::spline s_x_local, s_y_local;// s_d_local;
-//                        s_x_local.set_points(path_points_s_rescale,path_points_x);
-//                        s_y_local.set_points(path_points_s_rescale,path_points_y);
-//                        //s_d_local.set_points(path_points_s,path_points_d);
-//                        for(int i=0;i<path_points_s.size();i++) {
-//                            //cout << temp_s << '\t' << endl;
-//                            next_s_vals.push_back(path_points_s[i]);
-//                            next_d_vals.push_back(path_points_d[i]);
-//                            //next_s_vals.push_back(path_points_s_rescale[i]);
-//                            //next_d_vals.push_back(s_d_local(path_points_s_rescale[i]));
-//                            //next_x_vals.push_back(s_x_local(path_points_s_rescale[i]));
-//                            //next_y_vals.push_back(s_y_local(path_points_s_rescale[i]));
-//                            next_x_vals.push_back(path_points_x[i]);
-//                            next_y_vals.push_back(path_points_y[i]);
-//                        }
-//
                     }
 
                     // End
